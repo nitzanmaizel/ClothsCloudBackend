@@ -12,6 +12,7 @@ app.use(cors());
 app.use(cookieParser());
 
 app.use('/api', require('./routes/auth'));
+app.use('/items', require('./routes/items'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`server on http://localhost:${PORT}`));
