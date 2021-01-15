@@ -10,8 +10,20 @@ const getToken = require('../middleware/getToken');
 // @desc     Signup User
 // @access   Public
 
+router.get('/:id', async (req, res) => {
+	console.log(req.params.id);
+	try {
+		const item = await Item.findOne({ _id: req.params.id });
+		res.json(item);
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server error');
+	}
+});
+
 router.post(
 	'/addItem',
+	getToken,
 	[
 		check('name', 'name is required').not().isEmpty().trim(),
 		check('type', 'Type name is required').not().isEmpty().trim(),
