@@ -3,7 +3,6 @@ const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
 const Set = require('../models/Set');
-const FavoriteSets = require('../models/FavoriteSets');
 const getToken = require('../middleware/getToken');
 
 // @route    POST api/sets
@@ -13,6 +12,7 @@ const getToken = require('../middleware/getToken');
 router.post(
 	'/:id',
 	[
+		check('name', 'Name is required').not().isEmpty().trim(),
 		check('shirt', 'Shirt is required').not().isEmpty().trim(),
 		check('pants', 'Pants name is required').not().isEmpty().trim(),
 	],
@@ -78,6 +78,20 @@ router.get('/:id', async (req, res) => {
 			.populate('shirt')
 			.populate('pants');
 		res.json(set);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Server Error');
+	}
+});
+
+// @route    DELETE api/sets/:id
+// @desc     Delete set by ID
+// @access   Private
+
+router.delete('/:id', async (req, res) => {
+	try {
+		await Set.findByIdAndDelete({ _id: req.params.id });
+		res.json({ msg: 'Set deleted' });
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Server Error');

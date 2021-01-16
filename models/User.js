@@ -14,7 +14,7 @@ const UserScheme = new mongoose.Schema({
 		required: true,
 		unique: true,
 	},
-	favoriteSets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'FavoriteSets' }],
+	favoriteSets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Sets' }],
 	sets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Sets' }],
 	password: {
 		type: String,
