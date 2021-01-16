@@ -68,4 +68,20 @@ router.get('/', async (req, res) => {
 	}
 });
 
+// @route    GET api/sets/:id
+// @desc     Get set by ID
+// @access   Private
+
+router.get('/:id', async (req, res) => {
+	try {
+		const set = await Set.findOne({ _id: req.params.id })
+			.populate('shirt')
+			.populate('pants');
+		res.json(set);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Server Error');
+	}
+});
+
 module.exports = router;
