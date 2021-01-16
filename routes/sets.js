@@ -164,6 +164,20 @@ router.put('/save/:id/:userID', async (req, res) => {
 	}
 });
 
+// @route    GET api/sets/favorite
+// @desc     Get user favorite sets collection
+// @access   Private
+
+router.get('/favorite/:id', async (req, res) => {
+	try {
+		const user = await User.findOne({ _id: req.params.id }).populate('favoriteSets');
+		res.json(user);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Server Error');
+	}
+});
+
 // @route    DELETE api/sets/save/:id
 // @desc     Delete set from user favorite sets collection
 // @access   Private
