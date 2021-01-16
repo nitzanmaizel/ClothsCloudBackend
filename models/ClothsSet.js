@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const Set = new mongoose.Schema({
+const ClothsSet = new mongoose.Schema({
 	name: {
 		type: String,
 		required: true,
@@ -14,6 +14,7 @@ const Set = new mongoose.Schema({
 	},
 	shirt: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 	pants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
+	userID: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 	description: {
 		type: String,
 	},
@@ -23,4 +24,4 @@ const Set = new mongoose.Schema({
 	},
 });
 
-module.exports = mongoose.model('Set', Set);
+module.exports = mongoose.model('ClothsSet', ClothsSet);

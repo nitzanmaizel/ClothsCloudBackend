@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
-const Set = require('../models/Set');
+const ClothsSet = require('../models/ClothsSet');
 const getToken = require('../middleware/getToken');
 
 // @route    POST api/sets
@@ -26,22 +26,23 @@ router.post(
 			const { name, type, color, description } = req.body;
 			const { shirt, pants } = req.query;
 
-			let set = await Set.findOne({ name });
+			let clothsSet = await ClothsSet.findOne({ name });
 
-			if (set) {
+			if (clothsSet) {
 				return res.status(400).json({ errors: [{ msg: 'Set already exists' }] });
 			}
 
-			set = new Set({
+			clothsSet = new ClothsSet({
 				name,
 				type,
 				color,
 				shirt,
 				pants,
 				description,
+				// userID: req.user.id,
 			});
 
-			await set.save();
+			await clothsSet.save();
 
 			res.json({ msg: 'A new set added successfully' });
 		} catch (err) {
@@ -72,7 +73,7 @@ router.put(
 
 			const { shirt, pants } = req.query;
 
-			const updatedSet = {
+			const updatedClothsSet = {
 				name,
 				type,
 				color,
@@ -81,13 +82,13 @@ router.put(
 				description,
 			};
 
-			const set = await Set.findOneAndUpdate(
+			await ClothsSet.findOneAndUpdate(
 				{ _id: req.params.id },
-				{ $set: updatedSet },
+				{ $set: updatedClothsSet },
 				{ new: true }
 			);
 
-			res.json(set);
+			res.json({ msg: 'Cloths Set update successfully' });
 		} catch (err) {
 			console.error(err.massage);
 			res.status(500).send('Server error');
@@ -101,11 +102,11 @@ router.put(
 
 router.get('/', async (req, res) => {
 	try {
-		const sets = await Set.find({});
-		if (sets.length === 0) {
+		const clothsSets = await ClothsSet.find({});
+		if (clothsSets.length === 0) {
 			return res.status(404).send({ err: 'No sets found' });
 		}
-		res.json(sets);
+		res.json(clothsSets);
 	} catch (err) {
 		console.error(err.massage);
 		res.status(500).send('Server Error');
@@ -118,10 +119,10 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
 	try {
-		const set = await Set.findOne({ _id: req.params.id })
+		const clothsSet = await ClothsSet.findOne({ _id: req.params.id })
 			.populate('shirt')
 			.populate('pants');
-		res.json(set);
+		res.json(clothsSet);
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Server Error');
@@ -134,7 +135,7 @@ router.get('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
 	try {
-		await Set.findByIdAndDelete({ _id: req.params.id });
+		await ClothsSet.findByIdAndDelete({ _id: req.params.id });
 		res.json({ msg: 'Set deleted' });
 	} catch (err) {
 		console.error(err);
@@ -148,14 +149,14 @@ router.delete('/:id', async (req, res) => {
 
 router.put('/save/:id/:userID', async (req, res) => {
 	try {
-		const setID = req.params.id;
+		const ClothsSetID = req.params.id;
 		const userID = req.params.userID;
 		let user = await User.findOne({ _id: userID });
-		const isSaved = user.favoriteSets.some((id) => id == setID);
+		const isSaved = user.favoriteSets.some((id) => id == ClothsSetID);
 		if (isSaved) {
 			return res.status(400).json({ err: 'Set already saved' });
 		}
-		user.favoriteSets.push(setID);
+		user.favoriteSets.push(ClothsSetID);
 		await user.save();
 		res.json({ msg: 'Set saved successfully' });
 	} catch (err) {
@@ -184,14 +185,14 @@ router.get('/favorite/:id', async (req, res) => {
 
 router.delete('/save/:id/:userID', async (req, res) => {
 	try {
-		const setID = req.params.id;
+		const ClothsSetID = req.params.id;
 		const userID = req.params.userID;
 		let user = await User.findOne({ _id: userID });
-		const isSaved = user.favoriteSets.some((id) => id == setID);
+		const isSaved = user.favoriteSets.some((id) => id == ClothsSetID);
 		if (!isSaved) {
 			return res.status(400).json({ err: 'Set not found' });
 		}
-		const index = user.favoriteSets.indexOf(setID);
+		const index = user.favoriteSets.indexOf(ClothsSetID);
 		user.favoriteSets.splice(index, 1);
 		await user.save();
 		res.json({ msg: 'Set deleted successfully' });

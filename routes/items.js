@@ -40,9 +40,7 @@ router.post(
 			let item = await Item.findOne({ name });
 
 			if (item) {
-				return res
-					.status(400)
-					.json({ errors: [{ msg: 'Item already exists' }] });
+				return res.status(400).json({ errors: [{ msg: 'Item already exists' }] });
 			}
 
 			item = new Item({
@@ -51,6 +49,7 @@ router.post(
 				color,
 				description,
 				dateAdded,
+				userID: req.user.id,
 			});
 
 			await item.save();
@@ -61,23 +60,5 @@ router.post(
 		}
 	}
 );
-
-// @route    POST api/login
-// @desc     Login User
-// @access   Public
-
-// @route    GET api/user
-// @desc     Get logged in user
-// @access   Private
-
-router.get('/user', getToken, async (req, res) => {
-	try {
-		const user = await User.findOne({ _id: req.user.id }).select('-password');
-		res.json(user);
-	} catch (err) {
-		console.error(err.massage);
-		res.status(500).send('Server error');
-	}
-});
 
 module.exports = router;
