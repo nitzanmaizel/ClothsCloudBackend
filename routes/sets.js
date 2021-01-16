@@ -51,6 +51,50 @@ router.post(
 	}
 );
 
+// @route    PUT api/sets/:id
+// @desc     Update set by ID
+// @access   Private
+
+router.put(
+	'/:id',
+	[
+		check('name', 'Name is required').not().isEmpty().trim(),
+		check('shirt', 'Shirt is required').not().isEmpty().trim(),
+		check('pants', 'Pants name is required').not().isEmpty().trim(),
+	],
+	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array() });
+		}
+		try {
+			const { name, type, color, description } = req.body;
+
+			const { shirt, pants } = req.query;
+
+			const updatedSet = {
+				name,
+				type,
+				color,
+				shirt,
+				pants,
+				description,
+			};
+
+			const set = await Set.findOneAndUpdate(
+				{ _id: req.params.id },
+				{ $set: updatedSet },
+				{ new: true }
+			);
+
+			res.json(set);
+		} catch (err) {
+			console.error(err.massage);
+			res.status(500).send('Server error');
+		}
+	}
+);
+
 // @route    GET api/sets
 // @desc     Get all sets from user collection
 // @access   Private
