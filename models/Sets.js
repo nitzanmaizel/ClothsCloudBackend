@@ -11,7 +11,6 @@ const Sets = new mongoose.Schema({
 	},
 	color: {
 		type: String,
-		required: false,
 	},
 	hat: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 	shirt: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
