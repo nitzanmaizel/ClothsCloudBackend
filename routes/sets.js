@@ -142,4 +142,26 @@ router.delete('/:id', async (req, res) => {
 	}
 });
 
+// @route    PUT api/sets/save/:id
+// @desc     Save set to user favorite sets collection
+// @access   Private
+
+router.put('/save/:id/:userID', async (req, res) => {
+	try {
+		const setID = req.params.id;
+		const userID = req.params.userID;
+		let user = await User.findOne({ _id: userID });
+		const isSaved = user.favoriteSets.some((id) => id == setID);
+		if (isSaved) {
+			return res.status(400).json({ err: 'Set already saved' });
+		}
+		user.favoriteSets.push(setID);
+		await user.save();
+		res.json({ msg: 'Set saved successfully' });
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server Error');
+	}
+});
+
 module.exports = router;
