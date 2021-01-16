@@ -17,7 +17,6 @@ const ItemScheme = new mongoose.Schema({
 		type: String,
 		required: false,
 	},
-
 	dateAdded: {
 		type: Date,
 		default: Date.now(),

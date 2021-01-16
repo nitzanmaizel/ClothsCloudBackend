@@ -9,24 +9,14 @@ const FavoriteSets = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	hat: {
-		type: String,
-	},
-	shirt: {
-		type: String,
-		required: true,
-	},
-	pants: {
-		type: String,
-		required: true,
-	},
 	color: {
 		type: String,
 		required: false,
 	},
-	Shoes: {
-		type: String,
-	},
+	hat: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
+	shirt: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
+	pants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
+	shoes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 	description: {
 		type: String,
 	},
