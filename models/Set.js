@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const Sets = new mongoose.Schema({
+const Set = new mongoose.Schema({
 	name: {
 		type: String,
 		required: true,
@@ -12,10 +12,8 @@ const Sets = new mongoose.Schema({
 	color: {
 		type: String,
 	},
-	hat: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 	shirt: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 	pants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
-	shoes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 	description: {
 		type: String,
 	},
@@ -25,4 +23,4 @@ const Sets = new mongoose.Schema({
 	},
 });
 
-module.exports = mongoose.model('Sets', Sets);
+module.exports = mongoose.model('Set', Set);
