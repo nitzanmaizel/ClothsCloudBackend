@@ -211,14 +211,27 @@ router.delete('/:id/:userID', async (req, res) => {
 router.put('/save/:id/:userID', async (req, res) => {
 	try {
 		const ClothsSetID = req.params.id;
+
 		const userID = req.params.userID;
+
+		const clothsSet = await ClothsSet.findOne({ _id: req.params.id });
+
+		if (clothsSet.userID != userID) {
+			return res.status(400).json({ msg: 'Cloths set doesnt belongs to the user' });
+		}
+
 		let user = await User.findOne({ _id: userID });
+
 		const isSaved = user.favoriteSets.some((id) => id == ClothsSetID);
+
 		if (isSaved) {
 			return res.status(400).json({ err: 'Set already saved' });
 		}
+
 		user.favoriteSets.push(ClothsSetID);
+
 		await user.save();
+
 		res.json({ msg: 'Set saved successfully' });
 	} catch (err) {
 		console.error(err.massage);
@@ -233,6 +246,7 @@ router.put('/save/:id/:userID', async (req, res) => {
 router.get('/favorite/:id', async (req, res) => {
 	try {
 		const user = await User.findOne({ _id: req.params.id }).populate('favoriteSets');
+
 		res.json(user);
 	} catch (err) {
 		console.error(err);
@@ -247,15 +261,23 @@ router.get('/favorite/:id', async (req, res) => {
 router.delete('/save/:id/:userID', async (req, res) => {
 	try {
 		const ClothsSetID = req.params.id;
+
 		const userID = req.params.userID;
+
 		let user = await User.findOne({ _id: userID });
+
 		const isSaved = user.favoriteSets.some((id) => id == ClothsSetID);
+
 		if (!isSaved) {
 			return res.status(400).json({ err: 'Set not found' });
 		}
+
 		const index = user.favoriteSets.indexOf(ClothsSetID);
+
 		user.favoriteSets.splice(index, 1);
+
 		await user.save();
+
 		res.json({ msg: 'Set deleted successfully' });
 	} catch (err) {
 		console.error(err.massage);
