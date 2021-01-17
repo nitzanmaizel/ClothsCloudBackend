@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
 const ClothsSet = require('../models/ClothsSet');
 const getToken = require('../middleware/getToken');
+const Item = require('../models/Item');
 
 // @route    POST api/sets
 // @desc     Add set to user collection
@@ -201,5 +202,28 @@ router.delete('/save/:id/:userID', async (req, res) => {
 		res.status(500).send('Server Error');
 	}
 });
+
+// @route    GET api/sets/search/item
+// @desc     Get items By query's search
+// @access   Private
+
+// router.get('/search', async (req, res) => {
+// 	try {
+// 		let filter = {};
+// 		if (req.query.name) filter.name = req.query.name;
+// 		if (req.query.type) filter.type = req.query.type;
+// 		if (req.query.color) filter.color = req.query.color;
+// 		if (req.query.description) filter.description = req.query.description;
+// 		const items = await Item.find(filter);
+// 		const userItems = items.filter((id) => id === req.user.id);
+// 		if (userItems.length === 0) {
+// 			return res.status(404).send({ err: `No items found, try again ` });
+// 		}
+// 		res.json(userItems);
+// 	} catch (err) {
+// 		console.error(err.massage);
+// 		res.status(500).send('Server Error');
+// 	}
+// });
 
 module.exports = router;

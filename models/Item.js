@@ -17,11 +17,14 @@ const ItemScheme = new mongoose.Schema({
 		type: String,
 		required: false,
 	},
-	userID: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+	userID: {
+		type: String,
+		required: true,
+	},
 	dateAdded: {
 		type: Date,
 		default: Date.now(),
 	},
 });
 
-module.exports = mongoose.model('Item', ItemScheme);
+module.exports = mongoose.model('Items', ItemScheme);

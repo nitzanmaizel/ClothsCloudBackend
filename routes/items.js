@@ -3,8 +3,33 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator');
+const User = require('../models/User');
 const Item = require('../models/Item');
+
 const getToken = require('../middleware/getToken');
+
+// @route    GET api/sets/search/item
+// @desc     Get items By query's search
+// @access   Private
+
+router.get('/search', async (req, res) => {
+	try {
+		let filter = {};
+		if (req.query.name) filter.name = req.query.name;
+		if (req.query.type) filter.type = req.query.type;
+		if (req.query.color) filter.color = req.query.color;
+		if (req.query.description) filter.description = req.query.description;
+		const items = await Item.find(filter);
+		// const userItems = items.filter((id) => id === req.user.id);
+		if (items.length === 0) {
+			return res.status(404).send({ err: `No items found, try again ` });
+		}
+		res.json(items);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Server Error');
+	}
+});
 
 // @route
 // @desc
@@ -23,7 +48,7 @@ router.get('/:id', async (req, res) => {
 
 router.post(
 	'/addItem',
-	getToken,
+	// getToken,
 	[
 		check('name', 'name is required').not().isEmpty().trim(),
 		check('type', 'Type name is required').not().isEmpty().trim(),
@@ -35,26 +60,33 @@ router.post(
 		}
 
 		try {
-			const { name, type, color, description, dateAdded } = req.body;
+			const { name, type, color, description, dateAdded, userID } = req.body;
 
-			let item = await Item.findOne({ name });
+			const user = await User.findOne({ _id: userID }).select('-password');
 
-			if (item) {
-				return res
-					.status(400)
-					.json({ errors: [{ msg: 'Item already exists' }] });
+			const items = await Item.find({ name });
+
+			const isExists = items.some((item) => item.userID === userID);
+
+			if (isExists) {
+				return res.status(400).json({ errors: [{ msg: 'Item already exists' }] });
 			}
 
-			item = new Item({
+			const item = new Item({
 				name,
 				type,
 				color,
 				description,
 				dateAdded,
-				userID: req.user.id,
+				userID,
 			});
 
 			await item.save();
+
+			user.items.push(item._id);
+
+			await user.save();
+
 			res.status(200).send('Item was added successfully');
 		} catch (err) {
 			console.error(err);

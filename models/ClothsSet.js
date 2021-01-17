@@ -14,9 +14,12 @@ const ClothsSet = new mongoose.Schema({
 	},
 	shirt: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 	pants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
-	userID: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 	description: {
 		type: String,
+	},
+	userID: {
+		type: String,
+		required: true,
 	},
 	date: {
 		type: Date,
