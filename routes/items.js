@@ -12,9 +12,10 @@ const getToken = require('../middleware/getToken');
 // @desc     Get items By query's search
 // @access   Private
 
-router.get('/search', async (req, res) => {
+router.get('/search/:id', async (req, res) => {
 	try {
 		let filter = {};
+		filter.userID = req.params.id;
 		if (req.query.name) filter.name = req.query.name;
 		if (req.query.type) filter.type = req.query.type;
 		if (req.query.color) filter.color = req.query.color;
@@ -72,7 +73,7 @@ router.post(
 				return res.status(400).json({ errors: [{ msg: 'Item already exists' }] });
 			}
 
-			const item = new Item({
+			const newItem = new Item({
 				name,
 				type,
 				color,
@@ -81,9 +82,9 @@ router.post(
 				userID,
 			});
 
-			await item.save();
+			await newItem.save();
 
-			user.items.push(item._id);
+			user.items.push(newItem._id);
 
 			await user.save();
 
