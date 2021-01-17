@@ -173,9 +173,30 @@ router.get('/:id/:userID', async (req, res) => {
 // @desc     Delete set by ID
 // @access   Private
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id/:userID', async (req, res) => {
+	const userID = req.params.userID;
+
 	try {
+		let user = await User.findOne({ _id: userID });
+
+		if (!user) {
+			return res.status(400).json({ msg: 'User not exists' });
+		}
+
+		const clothsSet = await ClothsSet.findOne({ _id: req.params.id });
+
+		if (clothsSet.userID !== userID) {
+			return res.status(400).json({ msg: 'Cloths set doesnt belongs to the user' });
+		}
+
 		await ClothsSet.findByIdAndDelete({ _id: req.params.id });
+
+		const index = user.clothsSets.indexOf(req.params.id);
+
+		user.clothsSets.splice(index, 1);
+
+		await user.save();
+
 		res.json({ msg: 'Set deleted' });
 	} catch (err) {
 		console.error(err);
