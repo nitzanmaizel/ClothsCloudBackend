@@ -127,13 +127,15 @@ router.put(
 // @desc     Get all sets from user collection
 // @access   Private
 
-router.get('/', async (req, res) => {
+router.get('/:id', async (req, res) => {
+	const userID = req.params.id;
+
 	try {
-		const clothsSets = await ClothsSet.find({});
-		if (clothsSets.length === 0) {
-			return res.status(404).send({ err: 'No sets found' });
+		let user = await User.findOne({ _id: userID }).populate('clothsSets');
+		if (user.clothsSets.length === 0) {
+			return res.status(404).send({ err: 'No Cloths Sets found' });
 		}
-		res.json(clothsSets);
+		res.json(user.clothsSets);
 	} catch (err) {
 		console.error(err.massage);
 		res.status(500).send('Server Error');
