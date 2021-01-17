@@ -11,7 +11,7 @@ const Item = require('../models/Item');
 // @access   Private
 
 router.post(
-	'/:id',
+	'/',
 	[
 		check('name', 'Name is required').not().isEmpty().trim(),
 		check('shirt', 'Shirt is required').not().isEmpty().trim(),
@@ -24,13 +24,24 @@ router.post(
 		}
 
 		try {
-			const { name, type, color, description } = req.body;
+			const { name, type, color, description, userID } = req.body;
+
 			const { shirt, pants } = req.query;
+
+			let user = await User.findOne({ _id: userID }).select('-password');
+
+			const isBelongsShirt = user.items.some((id) => id == shirt);
+
+			const isBelongsPants = user.items.some((id) => id == pants);
+
+			if (!isBelongsShirt || !isBelongsPants) {
+				return res.status(400).json({ msg: 'Item doesnt belongs to the user' });
+			}
 
 			let clothsSet = await ClothsSet.findOne({ name });
 
 			if (clothsSet) {
-				return res.status(400).json({ errors: [{ msg: 'Set already exists' }] });
+				return res.status(400).json({ msg: 'Set already exists' });
 			}
 
 			clothsSet = new ClothsSet({
@@ -40,10 +51,14 @@ router.post(
 				shirt,
 				pants,
 				description,
-				// userID: req.user.id,
+				userID,
 			});
 
 			await clothsSet.save();
+
+			user.clothsSets.push(clothsSet._id);
+
+			await user.save();
 
 			res.json({ msg: 'A new set added successfully' });
 		} catch (err) {
