@@ -7,7 +7,7 @@ const getToken = require('../middleware/getToken');
 const Item = require('../models/Item');
 
 // @route    POST api/sets
-// @desc     Add set to user collection
+// @desc     Add Cloths Set to user collection
 // @access   Private
 
 router.post(
@@ -69,7 +69,7 @@ router.post(
 );
 
 // @route    PUT api/sets/:id
-// @desc     Update set by ID
+// @desc     Update Cloths Set by ID
 // @access   Private
 
 router.put(
@@ -124,7 +124,7 @@ router.put(
 );
 
 // @route    GET api/sets
-// @desc     Get all sets from user collection
+// @desc     Get all Cloths Sets from user collection
 // @access   Private
 
 router.get('/:id', async (req, res) => {
@@ -132,9 +132,15 @@ router.get('/:id', async (req, res) => {
 
 	try {
 		let user = await User.findOne({ _id: userID }).populate('clothsSets');
+
+		if (!user) {
+			return res.status(400).json({ msg: 'User not exists' });
+		}
+
 		if (user.clothsSets.length === 0) {
 			return res.status(404).send({ err: 'No Cloths Sets found' });
 		}
+
 		res.json(user.clothsSets);
 	} catch (err) {
 		console.error(err.massage);
@@ -143,14 +149,19 @@ router.get('/:id', async (req, res) => {
 });
 
 // @route    GET api/sets/:id
-// @desc     Get set by ID
+// @desc     Get Cloths Set by ID
 // @access   Private
 
-router.get('/:id', async (req, res) => {
+router.get('/:id/:userID', async (req, res) => {
+	const userID = req.params.userID;
 	try {
 		const clothsSet = await ClothsSet.findOne({ _id: req.params.id })
 			.populate('shirt')
 			.populate('pants');
+
+		if (clothsSet.userID !== userID) {
+			return res.status(400).json({ msg: 'Cloths set doesnt belongs to the user' });
+		}
 		res.json(clothsSet);
 	} catch (err) {
 		console.error(err);
