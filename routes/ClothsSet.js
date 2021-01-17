@@ -85,9 +85,19 @@ router.put(
 			return res.status(400).json({ errors: errors.array() });
 		}
 		try {
-			const { name, type, color, description } = req.body;
+			const { name, type, color, description, userID } = req.body;
 
 			const { shirt, pants } = req.query;
+
+			let user = await User.findOne({ _id: userID }).select('-password');
+
+			const isBelongsClothsSet = user.clothsSets.some((id) => id == req.params.id);
+
+			if (!isBelongsClothsSet) {
+				return res.status(400).json({ msg: 'Cloths Set doesnt belongs to the user' });
+			}
+
+			console.log(isBelongsClothsSet);
 
 			const updatedClothsSet = {
 				name,
@@ -96,6 +106,7 @@ router.put(
 				shirt,
 				pants,
 				description,
+				userID,
 			};
 
 			await ClothsSet.findOneAndUpdate(
