@@ -12,6 +12,7 @@ const Item = require('../models/Item');
 
 router.post(
 	'/',
+	getToken,
 	[
 		check('name', 'Name is required').not().isEmpty().trim(),
 		check('shirt', 'Shirt is required').not().isEmpty().trim(),
@@ -51,7 +52,7 @@ router.post(
 				shirt,
 				pants,
 				description,
-				userID,
+				userID: req.user.id,
 			});
 
 			await clothsSet.save();
