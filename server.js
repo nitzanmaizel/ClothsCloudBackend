@@ -15,5 +15,5 @@ app.use('/api', require('./routes/auth'));
 app.use('/items', require('./routes/items'));
 app.use('/api/sets', require('./routes/ClothsSet'));
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 app.listen(PORT, console.log(`server on http://localhost:${PORT}`));
