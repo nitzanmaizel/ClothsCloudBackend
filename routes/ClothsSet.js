@@ -91,10 +91,14 @@ router.put(
 
 			let user = await User.findOne({ _id: userID }).select('-password');
 
-			const isBelongsClothsSet = user.clothsSets.some((id) => id == req.params.id);
+			const isBelongsClothsSet = user.clothsSets.some(
+				(id) => id == req.params.id
+			);
 
 			if (!isBelongsClothsSet) {
-				return res.status(400).json({ msg: 'Cloths Set doesnt belongs to the user' });
+				return res
+					.status(400)
+					.json({ msg: 'Cloths Set doesnt belongs to the user' });
 			}
 
 			console.log(isBelongsClothsSet);
@@ -117,7 +121,7 @@ router.put(
 
 			res.json({ msg: 'Cloths Set update successfully' });
 		} catch (err) {
-			console.error(err.massage);
+			console.error(err);
 			res.status(500).send('Server error');
 		}
 	}
@@ -127,7 +131,7 @@ router.put(
 // @desc     Get all Cloths Sets from user collection
 // @access   Private
 
-router.get('/:id', async (req, res) => {
+router.get('userSets/:id', async (req, res) => {
 	const userID = req.params.id;
 
 	try {
@@ -143,7 +147,7 @@ router.get('/:id', async (req, res) => {
 
 		res.json(user.clothsSets);
 	} catch (err) {
-		console.error(err.massage);
+		console.error(err.message);
 		res.status(500).send('Server Error');
 	}
 });
@@ -152,7 +156,7 @@ router.get('/:id', async (req, res) => {
 // @desc     Get Cloths Set by ID
 // @access   Private
 
-router.get('/:id/:userID', async (req, res) => {
+router.get('userSet/:id/:userID', async (req, res) => {
 	const userID = req.params.userID;
 	try {
 		const clothsSet = await ClothsSet.findOne({ _id: req.params.id })
@@ -160,7 +164,9 @@ router.get('/:id/:userID', async (req, res) => {
 			.populate('pants');
 
 		if (clothsSet.userID !== userID) {
-			return res.status(400).json({ msg: 'Cloths set doesnt belongs to the user' });
+			return res
+				.status(400)
+				.json({ msg: 'Cloths set doesnt belongs to the user' });
 		}
 		res.json(clothsSet);
 	} catch (err) {
@@ -186,7 +192,9 @@ router.delete('/:id/:userID', async (req, res) => {
 		const clothsSet = await ClothsSet.findOne({ _id: req.params.id });
 
 		if (clothsSet.userID !== userID) {
-			return res.status(400).json({ msg: 'Cloths set doesnt belongs to the user' });
+			return res
+				.status(400)
+				.json({ msg: 'Cloths set doesnt belongs to the user' });
 		}
 
 		await ClothsSet.findByIdAndDelete({ _id: req.params.id });
@@ -217,7 +225,9 @@ router.put('/save/:id/:userID', async (req, res) => {
 		const clothsSet = await ClothsSet.findOne({ _id: req.params.id });
 
 		if (clothsSet.userID != userID) {
-			return res.status(400).json({ msg: 'Cloths set doesnt belongs to the user' });
+			return res
+				.status(400)
+				.json({ msg: 'Cloths set doesnt belongs to the user' });
 		}
 
 		let user = await User.findOne({ _id: userID });
@@ -234,7 +244,7 @@ router.put('/save/:id/:userID', async (req, res) => {
 
 		res.json({ msg: 'Set saved successfully' });
 	} catch (err) {
-		console.error(err.massage);
+		console.error(err);
 		res.status(500).send('Server Error');
 	}
 });
@@ -265,7 +275,7 @@ router.delete('/save/:id/:userID', async (req, res) => {
 
 		res.json({ msg: 'Set deleted successfully' });
 	} catch (err) {
-		console.error(err.massage);
+		console.error(err);
 		res.status(500).send('Server Error');
 	}
 });
@@ -286,27 +296,28 @@ router.get('/fav', async (req, res) => {
 	}
 });
 
-// @route    GET api/sets/search/item
-// @desc     Get items By query's search
+// @route    GET /sets/search/set/search
+// @desc     Get clothSet By query's search
 // @access   Private
 
-// router.get('/search', async (req, res) => {
-// 	try {
-// 		let filter = {};
-// 		if (req.query.name) filter.name = req.query.name;
-// 		if (req.query.type) filter.type = req.query.type;
-// 		if (req.query.color) filter.color = req.query.color;
-// 		if (req.query.description) filter.description = req.query.description;
-// 		const items = await Item.find(filter);
-// 		const userItems = items.filter((id) => id === req.user.id);
-// 		if (userItems.length === 0) {
-// 			return res.status(404).send({ err: `No items found, try again ` });
-// 		}
-// 		res.json(userItems);
-// 	} catch (err) {
-// 		console.error(err.massage);
-// 		res.status(500).send('Server Error');
-// 	}
-// });
+router.get('/search/:id', async (req, res) => {
+	try {
+		let filter = {};
+		filter.userID = req.params.id;
+		if (req.query.name) filter.name = req.query.name;
+		if (req.query.type) filter.type = req.query.type;
+		if (req.query.color) filter.color = req.query.color;
+		if (req.query.description) filter.description = req.query.description;
+		console.log(filter);
+		const closthSet = await ClothsSet.find(filter);
+		if (closthSet.length === 0) {
+			return res.status(404).send({ err: `No items found, try again ` });
+		}
+		res.json(closthSet);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Server Error');
+	}
+});
 
 module.exports = router;
