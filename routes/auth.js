@@ -104,7 +104,7 @@ router.post(
 					throw err;
 				}
 				res.cookie('token', token);
-				res.json(user);
+				res.json({ user, token });
 			});
 		} catch (err) {
 			console.error(err);
