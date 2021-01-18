@@ -12,18 +12,26 @@ const getToken = require('../middleware/getToken');
 // @desc     Get items By query's search
 // @access   Private
 
-router.get('/search/:id', async (req, res) => {
+router.get('/search', getToken, async (req, res) => {
 	try {
 		let filter = {};
-		filter.userID = req.params.id;
+
+		filter.userID = req.user.id;
+
 		if (req.query.name) filter.name = req.query.name;
+
 		if (req.query.type) filter.type = req.query.type;
+
 		if (req.query.color) filter.color = req.query.color;
+
 		if (req.query.description) filter.description = req.query.description;
+
 		const items = await Item.find(filter);
+
 		if (items.length === 0) {
 			return res.status(404).send({ err: `No items found, try again ` });
 		}
+
 		res.json(items);
 	} catch (err) {
 		console.error(err);
@@ -48,7 +56,7 @@ router.get('/:id', async (req, res) => {
 
 router.post(
 	'/addItem',
-	// getToken,
+	getToken,
 	[
 		check('name', 'name is required').not().isEmpty().trim(),
 		check('type', 'Type name is required').not().isEmpty().trim(),
@@ -60,7 +68,9 @@ router.post(
 		}
 
 		try {
-			const { name, type, color, description, dateAdded, userID } = req.body;
+			const { name, type, color, description, dateAdded } = req.body;
+
+			const userID = req.user.id;
 
 			const user = await User.findOne({ _id: userID }).select('-password');
 

@@ -4,7 +4,6 @@ const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
 const ClothsSet = require('../models/ClothsSet');
 const getToken = require('../middleware/getToken');
-const Item = require('../models/Item');
 
 // @route    POST api/sets
 // @desc     Add Cloths Set to user collection
@@ -12,6 +11,7 @@ const Item = require('../models/Item');
 
 router.post(
 	'/',
+	getToken,
 	[
 		check('name', 'Name is required').not().isEmpty().trim(),
 		check('shirt', 'Shirt is required').not().isEmpty().trim(),
@@ -24,9 +24,11 @@ router.post(
 		}
 
 		try {
-			const { name, type, color, description, userID } = req.body;
+			const { name, type, color, description } = req.body;
 
 			const { shirt, pants } = req.query;
+
+			const userID = req.user.id;
 
 			let user = await User.findOne({ _id: userID }).select('-password');
 
@@ -74,6 +76,8 @@ router.post(
 
 router.put(
 	'/:id',
+	getToken,
+
 	[
 		check('name', 'Name is required').not().isEmpty().trim(),
 		check('shirt', 'Shirt is required').not().isEmpty().trim(),
@@ -85,9 +89,11 @@ router.put(
 			return res.status(400).json({ errors: errors.array() });
 		}
 		try {
-			const { name, type, color, description, userID } = req.body;
+			const { name, type, color, description } = req.body;
 
 			const { shirt, pants } = req.query;
+
+			const userID = req.user.id;
 
 			let user = await User.findOne({ _id: userID }).select('-password');
 
@@ -135,6 +141,8 @@ router.get('userSets/:id', async (req, res) => {
 	const userID = req.params.id;
 
 	try {
+		const userID = req.user.id;
+
 		let user = await User.findOne({ _id: userID }).populate('clothsSets');
 
 		if (!user) {
@@ -158,7 +166,10 @@ router.get('userSets/:id', async (req, res) => {
 
 router.get('userSet/:id/:userID', async (req, res) => {
 	const userID = req.params.userID;
+
 	try {
+		const userID = req.user.id;
+
 		const clothsSet = await ClothsSet.findOne({ _id: req.params.id })
 			.populate('shirt')
 			.populate('pants');
@@ -168,6 +179,7 @@ router.get('userSet/:id/:userID', async (req, res) => {
 				.status(400)
 				.json({ msg: 'Cloths set doesnt belongs to the user' });
 		}
+
 		res.json(clothsSet);
 	} catch (err) {
 		console.error(err);
@@ -179,10 +191,10 @@ router.get('userSet/:id/:userID', async (req, res) => {
 // @desc     Delete set by ID
 // @access   Private
 
-router.delete('/:id/:userID', async (req, res) => {
-	const userID = req.params.userID;
-
+router.delete('/:id', getToken, async (req, res) => {
 	try {
+		const userID = req.user.id;
+
 		let user = await User.findOne({ _id: userID });
 
 		if (!user) {
@@ -216,11 +228,11 @@ router.delete('/:id/:userID', async (req, res) => {
 // @desc     Save set to user favorite sets collection
 // @access   Private
 
-router.put('/save/:id/:userID', async (req, res) => {
+router.put('/save/:id', getToken, async (req, res) => {
 	try {
 		const ClothsSetID = req.params.id;
 
-		const userID = req.user.userID;
+		const userID = req.user.id;
 
 		const clothsSet = await ClothsSet.findOne({ _id: req.params.id });
 
@@ -253,11 +265,11 @@ router.put('/save/:id/:userID', async (req, res) => {
 // @desc     Delete set from user favorite sets collection
 // @access   Private
 
-router.delete('/save/:id/:userID', async (req, res) => {
+router.delete('/save/:id', async (req, res) => {
 	try {
 		const ClothsSetID = req.params.id;
 
-		const userID = req.params.userID;
+		const userID = req.user.id;
 
 		let user = await User.findOne({ _id: userID });
 
