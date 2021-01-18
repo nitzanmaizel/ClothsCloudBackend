@@ -31,9 +31,7 @@ router.post(
 			let user = await User.findOne({ email });
 
 			if (user) {
-				return res
-					.status(400)
-					.json({ errors: [{ msg: 'User already exists' }] });
+				return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
 			}
 
 			user = new User({
@@ -53,18 +51,13 @@ router.post(
 				id: user.id,
 			};
 
-			jwt.sign(
-				payload,
-				process.env.jwtSecret,
-				{ expiresIn: 360000 },
-				(err, token) => {
-					if (err) {
-						throw err;
-					}
-					res.cookie('token', token);
-					res.json({ token });
+			jwt.sign(payload, process.env.jwtSecret, { expiresIn: 360000 }, (err, token) => {
+				if (err) {
+					throw err;
 				}
-			);
+				res.cookie('token', token);
+				res.json(user);
+			});
 		} catch (err) {
 			console.error(err.massage);
 			res.status(500).send('Server error');
@@ -94,34 +87,25 @@ router.post(
 			let user = await User.findOne({ email });
 
 			if (!user) {
-				return res
-					.status(400)
-					.json({ errors: [{ msg: 'Invalid Credential' }] });
+				return res.status(400).json({ errors: [{ msg: 'Invalid Credential' }] });
 			}
 
 			const isMatch = await bcrypt.compare(password, user.password);
 
 			if (!isMatch) {
-				return res
-					.status(400)
-					.json({ errors: [{ msg: 'Invalid Credential' }] });
+				return res.status(400).json({ errors: [{ msg: 'Invalid Credential' }] });
 			}
 
 			const payload = {
 				id: user.id,
 			};
-			jwt.sign(
-				payload,
-				process.env.jwtSecret,
-				{ expiresIn: 360000 },
-				(err, token) => {
-					if (err) {
-						throw err;
-					}
-					res.cookie('token', token);
-					res.json({ token });
+			jwt.sign(payload, process.env.jwtSecret, { expiresIn: 360000 }, (err, token) => {
+				if (err) {
+					throw err;
 				}
-			);
+				res.cookie('token', token);
+				res.json(user);
+			});
 		} catch (err) {
 			console.error(err);
 			res.status(500).send('Server error');
