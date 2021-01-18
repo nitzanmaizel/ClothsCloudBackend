@@ -21,7 +21,6 @@ router.get('/search/:id', async (req, res) => {
 		if (req.query.color) filter.color = req.query.color;
 		if (req.query.description) filter.description = req.query.description;
 		const items = await Item.find(filter);
-		// const userItems = items.filter((id) => id === req.user.id);
 		if (items.length === 0) {
 			return res.status(404).send({ err: `No items found, try again ` });
 		}

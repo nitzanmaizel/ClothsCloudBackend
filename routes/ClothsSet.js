@@ -212,7 +212,7 @@ router.put('/save/:id/:userID', async (req, res) => {
 	try {
 		const ClothsSetID = req.params.id;
 
-		const userID = req.params.userID;
+		const userID = req.user.userID;
 
 		const clothsSet = await ClothsSet.findOne({ _id: req.params.id });
 
@@ -235,21 +235,6 @@ router.put('/save/:id/:userID', async (req, res) => {
 		res.json({ msg: 'Set saved successfully' });
 	} catch (err) {
 		console.error(err.massage);
-		res.status(500).send('Server Error');
-	}
-});
-
-// @route    GET api/sets/favorite
-// @desc     Get user favorite sets collection
-// @access   Private
-
-router.get('/favorite/:id', async (req, res) => {
-	try {
-		const user = await User.findOne({ _id: req.params.id }).populate('favoriteSets');
-
-		res.json(user);
-	} catch (err) {
-		console.error(err);
 		res.status(500).send('Server Error');
 	}
 });
@@ -281,6 +266,22 @@ router.delete('/save/:id/:userID', async (req, res) => {
 		res.json({ msg: 'Set deleted successfully' });
 	} catch (err) {
 		console.error(err.massage);
+		res.status(500).send('Server Error');
+	}
+});
+
+// @route    GET api/sets/favorite
+// @desc     Get user favorite sets collection
+// @access   Private
+
+router.get('/fav', async (req, res) => {
+	try {
+		// const user = await User.findOne({ _id: req.params.id });
+
+		// res.json(user);
+		res.json('hello');
+	} catch (err) {
+		console.error(err);
 		res.status(500).send('Server Error');
 	}
 });
