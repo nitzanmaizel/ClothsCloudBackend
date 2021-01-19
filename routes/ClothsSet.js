@@ -133,7 +133,7 @@ router.put(
 // @desc     Get all Cloths Sets from user collection
 // @access   Private
 
-router.get('userSets/:id', getToken, async (req, res) => {
+router.get('/userSets', getToken, async (req, res) => {
 	try {
 		const userID = req.user.id;
 
@@ -158,7 +158,7 @@ router.get('userSets/:id', getToken, async (req, res) => {
 // @desc     Get Cloths Set by ID
 // @access   Private
 
-router.get('userSet/:id', getToken, async (req, res) => {
+router.get('/userSet/:id', getToken, async (req, res) => {
 	try {
 		const userID = req.user.id;
 
