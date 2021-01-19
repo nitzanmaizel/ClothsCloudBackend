@@ -97,14 +97,10 @@ router.put(
 
 			let user = await User.findOne({ _id: userID }).select('-password');
 
-			const isBelongsClothsSet = user.clothsSets.some(
-				(id) => id == req.params.id
-			);
+			const isBelongsClothsSet = user.clothsSets.some((id) => id == req.params.id);
 
 			if (!isBelongsClothsSet) {
-				return res
-					.status(400)
-					.json({ msg: 'Cloths Set doesnt belongs to the user' });
+				return res.status(400).json({ msg: 'Cloths Set doesnt belongs to the user' });
 			}
 
 			console.log(isBelongsClothsSet);
@@ -137,9 +133,7 @@ router.put(
 // @desc     Get all Cloths Sets from user collection
 // @access   Private
 
-router.get('userSets/:id', async (req, res) => {
-	const userID = req.params.id;
-
+router.get('userSets/:id', getToken, async (req, res) => {
 	try {
 		const userID = req.user.id;
 
@@ -164,9 +158,7 @@ router.get('userSets/:id', async (req, res) => {
 // @desc     Get Cloths Set by ID
 // @access   Private
 
-router.get('userSet/:id/:userID', async (req, res) => {
-	const userID = req.params.userID;
-
+router.get('userSet/:id', getToken, async (req, res) => {
 	try {
 		const userID = req.user.id;
 
@@ -175,9 +167,7 @@ router.get('userSet/:id/:userID', async (req, res) => {
 			.populate('pants');
 
 		if (clothsSet.userID !== userID) {
-			return res
-				.status(400)
-				.json({ msg: 'Cloths set doesnt belongs to the user' });
+			return res.status(400).json({ msg: 'Cloths set doesnt belongs to the user' });
 		}
 
 		res.json(clothsSet);
@@ -204,9 +194,7 @@ router.delete('/:id', getToken, async (req, res) => {
 		const clothsSet = await ClothsSet.findOne({ _id: req.params.id });
 
 		if (clothsSet.userID !== userID) {
-			return res
-				.status(400)
-				.json({ msg: 'Cloths set doesnt belongs to the user' });
+			return res.status(400).json({ msg: 'Cloths set doesnt belongs to the user' });
 		}
 
 		await ClothsSet.findByIdAndDelete({ _id: req.params.id });
@@ -237,9 +225,7 @@ router.put('/save/:id', getToken, async (req, res) => {
 		const clothsSet = await ClothsSet.findOne({ _id: req.params.id });
 
 		if (clothsSet.userID != userID) {
-			return res
-				.status(400)
-				.json({ msg: 'Cloths set doesnt belongs to the user' });
+			return res.status(400).json({ msg: 'Cloths set doesnt belongs to the user' });
 		}
 
 		let user = await User.findOne({ _id: userID });
@@ -265,7 +251,7 @@ router.put('/save/:id', getToken, async (req, res) => {
 // @desc     Delete set from user favorite sets collection
 // @access   Private
 
-router.delete('/save/:id', async (req, res) => {
+router.delete('/save/:id', getToken, async (req, res) => {
 	try {
 		const ClothsSetID = req.params.id;
 
@@ -296,7 +282,7 @@ router.delete('/save/:id', async (req, res) => {
 // @desc     Get user favorite sets collection
 // @access   Private
 
-router.get('/fav', async (req, res) => {
+router.get('/fav', getToken, async (req, res) => {
 	try {
 		// const user = await User.findOne({ _id: req.params.id });
 
@@ -312,7 +298,7 @@ router.get('/fav', async (req, res) => {
 // @desc     Get clothSet By query's search
 // @access   Private
 
-router.get('/search/:id', async (req, res) => {
+router.get('/search/:id', getToken, async (req, res) => {
 	try {
 		let filter = {};
 		filter.userID = req.params.id;
