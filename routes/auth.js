@@ -28,7 +28,7 @@ router.post(
 		try {
 			const { firstName, lastName, email, password } = req.body;
 
-			let user = await User.findOne({ email });
+			let user = await User.findOne({ email }).select('-password');
 
 			if (user) {
 				return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
@@ -56,7 +56,7 @@ router.post(
 					throw err;
 				}
 				res.cookie('token', token);
-				res.json(user).select('-password');
+				res.json(user);
 			});
 		} catch (err) {
 			console.error(err.massage);
@@ -84,7 +84,7 @@ router.post(
 		try {
 			const { email, password } = req.body;
 
-			let user = await User.findOne({ email });
+			let user = await User.findOne({ email }).select('-password');
 
 			if (!user) {
 				return res.status(400).json({ errors: [{ msg: 'Invalid Credential' }] });
@@ -104,7 +104,7 @@ router.post(
 					throw err;
 				}
 				res.cookie('token', token);
-				res.json(user).select('-password');
+				res.json(user);
 			});
 		} catch (err) {
 			console.error(err);
