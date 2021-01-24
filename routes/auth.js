@@ -28,7 +28,7 @@ router.post(
 		try {
 			const { firstName, lastName, email, password } = req.body;
 
-			let user = await User.findOne({ email }).select('-password');
+			let user = await User.findOne({ email });
 
 			if (user) {
 				return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
@@ -84,7 +84,7 @@ router.post(
 		try {
 			const { email, password } = req.body;
 
-			let user = await User.findOne({ email }).select('-password');
+			const user = await User.findOne({ email });
 
 			if (!user) {
 				return res.status(400).json({ errors: [{ msg: 'Invalid Credential' }] });
@@ -112,19 +112,5 @@ router.post(
 		}
 	}
 );
-
-// @route    GET api/user
-// @desc     Get logged in user
-// @access   Private
-
-router.get('/user', getToken, async (req, res) => {
-	try {
-		const user = await User.findOne({ _id: req.user.id }).select('-password');
-		res.json(user);
-	} catch (err) {
-		console.error(err.massage);
-		res.status(500).send('Server error');
-	}
-});
 
 module.exports = router;

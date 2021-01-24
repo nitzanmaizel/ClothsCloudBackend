@@ -31,4 +31,4 @@ const ItemScheme = new mongoose.Schema({
 	},
 });
 
-module.exports = mongoose.model('Items', ItemScheme);
+module.exports = mongoose.model('Item', ItemScheme);

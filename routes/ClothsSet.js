@@ -5,7 +5,34 @@ const User = require('../models/User');
 const ClothsSet = require('../models/ClothsSet');
 const getToken = require('../middleware/getToken');
 
-// @route    POST api/sets
+// @route    GET api/clothsset/randomset
+// @desc     Get logged in user
+// @access   Private
+
+router.get('/randomset/:id', async (req, res) => {
+	try {
+		let filter = {};
+		if (req.query.description) filter.description = req.query.description;
+		const user = await User.findOne({ _id: req.params.id })
+			.populate('items')
+			.select('-password');
+		const userShirts = user.items.filter(
+			(item) => item.type === 'shirt' && item.description === filter.description
+		);
+		const randShirt = userShirts[Math.floor(Math.random() * userShirts.length)];
+		const userPants = user.items.filter(
+			(item) => item.type === 'pants' && item.description === filter.description
+		);
+		const randPants = userPants[Math.floor(Math.random() * userPants.length)];
+
+		res.json({ randShirt, randPants });
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Server error');
+	}
+});
+
+// @route    POST api/clothsset
 // @desc     Add Cloths Set to user collection
 // @access   Private
 
@@ -70,7 +97,7 @@ router.post(
 	}
 );
 
-// @route    PUT api/sets/:id
+// @route    PUT api/clothsset/:id
 // @desc     Update Cloths Set by ID
 // @access   Private
 
@@ -129,7 +156,7 @@ router.put(
 	}
 );
 
-// @route    GET api/sets
+// @route    GET api/clothsset
 // @desc     Get all Cloths Sets from user collection
 // @access   Private
 
@@ -154,7 +181,7 @@ router.get('/userSets', getToken, async (req, res) => {
 	}
 });
 
-// @route    GET api/sets/:id
+// @route    GET api/clothsset/:id
 // @desc     Get Cloths Set by ID
 // @access   Private
 
@@ -177,7 +204,7 @@ router.get('/userSet/:id', getToken, async (req, res) => {
 	}
 });
 
-// @route    DELETE api/sets/:id
+// @route    DELETE api/clothsset/:id
 // @desc     Delete set by ID
 // @access   Private
 
@@ -212,7 +239,7 @@ router.delete('/:id', getToken, async (req, res) => {
 	}
 });
 
-// @route    PUT api/sets/save/:id
+// @route    PUT api/clothsset/save/:id
 // @desc     Save set to user favorite sets collection
 // @access   Private
 
@@ -247,7 +274,7 @@ router.put('/save/:id', getToken, async (req, res) => {
 	}
 });
 
-// @route    DELETE api/sets/save/:id
+// @route    DELETE api/clothsset/save/:id
 // @desc     Delete set from user favorite sets collection
 // @access   Private
 
@@ -278,7 +305,7 @@ router.delete('/save/:id', getToken, async (req, res) => {
 	}
 });
 
-// @route    GET api/sets/favorite
+// @route    GET api/clothsset/favorite
 // @desc     Get user favorite sets collection
 // @access   Private
 
@@ -294,7 +321,7 @@ router.get('/fav', getToken, async (req, res) => {
 	}
 });
 
-// @route    GET /sets/search/set/search
+// @route    GET /api/clothsset/search/set/search
 // @desc     Get clothSet By query's search
 // @access   Private
 

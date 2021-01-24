@@ -57,10 +57,11 @@ router.get('/item/:id', async (req, res) => {
 
 router.post(
 	'/addItem',
-	// [
-	// 	check('name', 'name is required').not().isEmpty().trim(),
-	// 	check('type', 'Type name is required').not().isEmpty().trim(),
-	// ],
+	getToken,
+	[
+		check('name', 'name is required').not().isEmpty().trim(),
+		check('type', 'Type name is required').not().isEmpty().trim(),
+	],
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
