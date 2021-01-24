@@ -7,6 +7,7 @@ const User = require('../models/User');
 const Item = require('../models/Item');
 
 const getToken = require('../middleware/getToken');
+const { cloudinary } = require('../util/cloudinary');
 
 // @route    GET api/sets/search/item
 // @desc     Get items By query's search
@@ -43,7 +44,7 @@ router.get('/search', getToken, async (req, res) => {
 // @desc
 // @access
 
-router.get('/:id', async (req, res) => {
+router.get('/item/:id', async (req, res) => {
 	console.log(req.params.id);
 	try {
 		const item = await Item.findOne({ _id: req.params.id });
@@ -56,11 +57,10 @@ router.get('/:id', async (req, res) => {
 
 router.post(
 	'/addItem',
-	getToken,
-	[
-		check('name', 'name is required').not().isEmpty().trim(),
-		check('type', 'Type name is required').not().isEmpty().trim(),
-	],
+	// [
+	// 	check('name', 'name is required').not().isEmpty().trim(),
+	// 	check('type', 'Type name is required').not().isEmpty().trim(),
+	// ],
 	async (req, res) => {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
@@ -68,7 +68,11 @@ router.post(
 		}
 
 		try {
-			const { name, type, color, description, dateAdded } = req.body;
+			res.send(req);
+			const { name, type, color, description, dateAdded, image } = req.body;
+			const uploadResponse = await cloudinary.uploader.upload(image, {
+				upload_preset: 'cloudcloset',
+			});
 
 			const userID = req.user.id;
 
@@ -88,7 +92,8 @@ router.post(
 				color,
 				description,
 				dateAdded,
-				userID,
+				// userID,
+				imageUrl: uploadResponse.url,
 			});
 
 			await newItem.save();
