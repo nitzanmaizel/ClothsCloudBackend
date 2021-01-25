@@ -159,7 +159,7 @@ router.put(
 // @desc     Get logged in user
 // @access   Private
 
-router.get('/myitems', async (req, res) => {
+router.get('/myitems', getToken, async (req, res) => {
 	try {
 		const user = await User.findOne({ _id: req.user.id }).populate('items');
 		res.json(user.items);
