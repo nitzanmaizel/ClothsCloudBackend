@@ -57,7 +57,7 @@ router.get('/item/:id', async (req, res) => {
 });
 
 router.post(
-	'/addItem/:id',
+	'/addItem',
 	getToken,
 	[
 		check('name', 'Name is required').not().isEmpty().trim(),
@@ -76,7 +76,7 @@ router.post(
 		try {
 			const { bodyPart, color, style, season, imageUrl, name } = req.body;
 
-			const userID = req.params.id;
+			const userID = req.user.id;
 
 			const uploadResponse = await cloudinary.uploader.upload(imageUrl, {
 				upload_preset: 'cloudcloset',
