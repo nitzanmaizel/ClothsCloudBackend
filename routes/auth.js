@@ -119,7 +119,7 @@ router.post(
 
 router.get('/auth', getToken, async (req, res) => {
 	try {
-		const user = await User.findOne({ _id: req.user.id });
+		const user = await User.findOne({ _id: req.user.id }).select('-password');
 		res.json(user);
 	} catch (err) {
 		console.error(err.massage);
