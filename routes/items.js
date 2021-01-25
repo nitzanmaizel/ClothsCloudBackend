@@ -59,8 +59,9 @@ router.post(
 	'/addItem',
 	getToken,
 	[
-		check('name', 'name is required').not().isEmpty().trim(),
-		check('type', 'Type name is required').not().isEmpty().trim(),
+		check('name', 'Name is required').not().isEmpty().trim(),
+		check('season', 'Season is required').not().isEmpty().trim(),
+		check('style', 'Style name is required').not().isEmpty().trim(),
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
@@ -69,9 +70,9 @@ router.post(
 		}
 
 		try {
-			res.send(req);
-			const { name, type, color, description, dateAdded, image } = req.body;
-			const uploadResponse = await cloudinary.uploader.upload(image, {
+			const { bodyPart, color, style, season, imageUrl, name } = req.body;
+
+			const uploadResponse = await cloudinary.uploader.upload(imageUrl, {
 				upload_preset: 'cloudcloset',
 			});
 
@@ -88,12 +89,12 @@ router.post(
 			}
 
 			const newItem = new Item({
-				name,
-				type,
+				bodyPart,
 				color,
-				description,
-				dateAdded,
-				// userID,
+				style,
+				season,
+				name,
+				userID,
 				imageUrl: uploadResponse.url,
 			});
 

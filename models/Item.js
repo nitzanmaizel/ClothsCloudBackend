@@ -3,24 +3,28 @@ const mongoose = require('mongoose');
 const ItemScheme = new mongoose.Schema({
 	name: {
 		type: String,
-		// required: true,
+		required: true,
 	},
-	type: {
+	bodyPart: {
 		type: String,
-		// required: true,
+		required: true,
+	},
+	season: {
+		type: String,
+		required: true,
 	},
 	color: {
 		type: String,
-		// required: false,
+		required: false,
 	},
-	description: {
+	style: {
 		type: String,
-		// required: false,
+		required: false,
 	},
-	// userID: {
-	// 	type: String,
-	// 	required: true,
-	// },
+	userID: {
+		type: String,
+		required: true,
+	},
 	imageUrl: {
 		type: String,
 		required: true,
