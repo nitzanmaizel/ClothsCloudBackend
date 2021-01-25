@@ -10,7 +10,7 @@ const getToken = require('../middleware/getToken');
 
 const { cloudinary } = require('../util/cloudinary');
 
-// @route    GET api/sets/search/item
+// @route    GET api/items/search?name=&&type=&&color=&&description=
 // @desc     Get items By query's search
 // @access   Private
 
@@ -154,5 +154,19 @@ router.put(
 		}
 	}
 );
+
+// @route    GET api/items/myitems
+// @desc     Get logged in user
+// @access   Private
+
+router.get('/myitems', async (req, res) => {
+	try {
+		const user = await User.findOne({ _id: req.user.id }).populate('items');
+		res.json(user.items);
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server error');
+	}
+});
 
 module.exports = router;
