@@ -72,11 +72,11 @@ router.post(
 		try {
 			const { bodyPart, color, style, season, imageUrl, name } = req.body;
 
+			const userID = req.user.id;
+
 			const uploadResponse = await cloudinary.uploader.upload(imageUrl, {
 				upload_preset: 'cloudcloset',
 			});
-
-			const userID = req.user.id;
 
 			const user = await User.findOne({ _id: userID }).select('-password');
 
