@@ -56,7 +56,7 @@ router.post(
 					throw err;
 				}
 				res.cookie('token', token);
-				res.json(user);
+				res.json(token);
 			});
 		} catch (err) {
 			console.error(err.massage);
@@ -104,7 +104,7 @@ router.post(
 					throw err;
 				}
 				res.cookie('token', token);
-				res.json(user);
+				res.json(token);
 			});
 		} catch (err) {
 			console.error(err);
