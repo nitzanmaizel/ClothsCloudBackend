@@ -7,6 +7,7 @@ const User = require('../models/User');
 const Item = require('../models/Item');
 
 const getToken = require('../middleware/getToken');
+
 const { cloudinary } = require('../util/cloudinary');
 
 // @route    GET api/sets/search/item
@@ -64,7 +65,10 @@ router.post(
 		check('style', 'Style name is required').not().isEmpty().trim(),
 	],
 	async (req, res) => {
+		// const userID = req.user.id;
+
 		const errors = validationResult(req);
+
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
 		}
@@ -72,17 +76,15 @@ router.post(
 		try {
 			const { bodyPart, color, style, season, imageUrl, name } = req.body;
 
-			const userID = req.user.id;
-
 			const uploadResponse = await cloudinary.uploader.upload(imageUrl, {
 				upload_preset: 'cloudcloset',
 			});
 
-			const user = await User.findOne({ _id: userID }).select('-password');
+			const user = await User.findOne({ _id: req.user.id }).select('-password');
 
 			const items = await Item.find({ name });
 
-			const isExists = items.some((item) => item.userID === userID);
+			const isExists = items.some((item) => item.userID === req.user.id);
 
 			if (isExists) {
 				return res.status(400).json({ errors: [{ msg: 'Item already exists' }] });
@@ -94,7 +96,7 @@ router.post(
 				style,
 				season,
 				name,
-				userID,
+				userID: req.user.id,
 				imageUrl: uploadResponse.url,
 			});
 
