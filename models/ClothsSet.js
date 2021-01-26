@@ -5,18 +5,18 @@ const ClothsSet = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	type: {
+	style: {
 		type: String,
 		required: true,
 	},
 	color: {
 		type: String,
 	},
-	shirt: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Items' }],
-	pants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Items' }],
-	description: {
+	season: {
 		type: String,
 	},
+	shirt: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Items' }],
+	pants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Items' }],
 	userID: {
 		type: String,
 		required: true,
