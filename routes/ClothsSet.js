@@ -116,7 +116,7 @@ router.put(
 			return res.status(400).json({ errors: errors.array() });
 		}
 		try {
-			const { name, type, color, description } = req.body;
+			const { name, style, color, season } = req.body;
 
 			const { shirt, pants } = req.query;
 
@@ -134,11 +134,11 @@ router.put(
 
 			const updatedClothsSet = {
 				name,
-				type,
+				style,
 				color,
 				shirt,
 				pants,
-				description,
+				season,
 				userID,
 			};
 
@@ -330,9 +330,9 @@ router.get('/search/:id', getToken, async (req, res) => {
 		let filter = {};
 		filter.userID = req.params.id;
 		if (req.query.name) filter.name = req.query.name;
-		if (req.query.type) filter.type = req.query.type;
+		if (req.query.style) filter.style = req.query.style;
 		if (req.query.color) filter.color = req.query.color;
-		if (req.query.description) filter.description = req.query.description;
+		if (req.query.season) filter.season = req.query.season;
 		console.log(filter);
 		const closthSet = await ClothsSet.find(filter);
 		if (closthSet.length === 0) {
