@@ -155,13 +155,48 @@ router.put(
 	}
 );
 
+// @route    PUT api/clothsset/save/:id
+// @desc     Save set to user favorite sets collection
+// @access   Private
+
+router.put('/save/:id', getToken, async (req, res) => {
+	try {
+		const itemID = req.params.id;
+
+		const userID = req.user.id;
+
+		const item = await Item.findOne({ _id: req.params.id });
+
+		if (item.userID != userID) {
+			return res.status(400).json({ msg: 'Item doesnt belongs to the user' });
+		}
+
+		let user = await User.findOne({ _id: userID });
+
+		const isSaved = user.favoriteItems.some((id) => id == itemID);
+
+		if (isSaved) {
+			return res.status(400).json({ err: 'Item already saved' });
+		}
+
+		user.favoriteItems.push(itemID);
+
+		await user.save();
+
+		res.json({ msg: 'Item saved successfully' });
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Server Error');
+	}
+});
+
 // @route    GET api/items/myitems
 // @desc     Get logged in user
 // @access   Private
 
-router.get('/myitems', getToken, async (req, res) => {
+router.get('/myitems/:id', async (req, res) => {
 	try {
-		const user = await User.findOne({ _id: req.user.id }).populate('items');
+		const user = await User.findOne({ _id: req.params.id }).populate('items');
 		res.json(user.items);
 	} catch (err) {
 		console.error(err.massage);

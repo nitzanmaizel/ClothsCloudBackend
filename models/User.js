@@ -16,6 +16,7 @@ const UserScheme = new mongoose.Schema({
 	},
 	favoriteSets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ClothsSet' }],
 	clothsSets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ClothsSet' }],
+	favoriteItems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 	items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 	password: {
 		type: String,
