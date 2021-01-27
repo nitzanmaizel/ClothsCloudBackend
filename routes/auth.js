@@ -118,7 +118,7 @@ router.post(
 // @desc     Get logged in user
 // @access   Private
 
-router.get('/auth/:id', getToken, async (req, res) => {
+router.get('/auth', getToken, async (req, res) => {
 	try {
 		const user = await User.findOne({ _id: req.user.id }).select('-password');
 		res.json(user);
