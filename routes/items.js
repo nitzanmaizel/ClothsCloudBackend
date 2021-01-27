@@ -65,8 +65,6 @@ router.post(
 		check('style', 'Style name is required').not().isEmpty().trim(),
 	],
 	async (req, res) => {
-		// const userID = req.user.id;
-
 		const errors = validationResult(req);
 
 		if (!errors.isEmpty()) {
@@ -82,7 +80,7 @@ router.post(
 				upload_preset: 'cloudcloset',
 			});
 
-			const user = await User.findOne({ _id: userID }).select('-password');
+			const user = await User.findOne({ _id: userID });
 
 			const items = await Item.find({ name });
 
