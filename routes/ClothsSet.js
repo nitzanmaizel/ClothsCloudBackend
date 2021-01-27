@@ -9,19 +9,20 @@ const getToken = require('../middleware/getToken');
 // @desc     Get logged in user
 // @access   Private
 
-router.get('/randomset/:id', async (req, res) => {
+router.get('/randomset', getToken, async (req, res) => {
 	try {
 		let filter = {};
-		if (req.query.description) filter.description = req.query.description;
-		const user = await User.findOne({ _id: req.params.id })
+		if (req.query.style) filter.style = req.query.style;
+		if (req.query.season) filter.season = req.query.season;
+		const user = await User.findOne({ _id: req.user.id })
 			.populate('items')
 			.select('-password');
 		const userShirts = user.items.filter(
-			(item) => item.type === 'shirt' && item.description === filter.description
+			(item) => item.type === 'shirt' && item.description === filter.style && filter.season
 		);
 		const randShirt = userShirts[Math.floor(Math.random() * userShirts.length)];
 		const userPants = user.items.filter(
-			(item) => item.type === 'pants' && item.description === filter.description
+			(item) => item.type === 'pants' && item.description === filter.style && filter.season
 		);
 		const randPants = userPants[Math.floor(Math.random() * userPants.length)];
 
