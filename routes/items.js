@@ -57,7 +57,7 @@ router.get('/item/:id', async (req, res) => {
 });
 
 router.post(
-	'/addItem',
+	'/addItem/:id',
 	getToken,
 	[
 		check('name', 'Name is required').not().isEmpty().trim(),
