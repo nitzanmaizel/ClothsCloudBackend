@@ -12,13 +12,28 @@ const getToken = require('../middleware/getToken');
 router.get('/randomset', getToken, async (req, res) => {
 	try {
 		let filter = {};
+
 		if (req.query.style) filter.style = req.query.style;
+
 		if (req.query.season) filter.season = req.query.season;
+
 		const user = await User.findOne({ _id: req.user.id }).populate('items');
-		const userShirts = user.items.filter((item) => item.bodyPart === 'Shirt');
+
+		let userShirts = user.items.filter((item) => item.bodyPart === 'Shirt');
+
+		let userPants = user.items.filter((item) => item.bodyPart === 'Pants');
+
+		if (filter.style) {
+			userShirts = userShirts.filter((item) => item.style === filter.style);
+			userPants = userPants.filter((item) => item.style === filter.style);
+		}
+		if (filter.season) {
+			userShirts = userShirts.filter((item) => item.season === filter.season);
+			userPants = userPants.filter((item) => item.season === filter.season);
+		}
+
 		const randShirt = userShirts[Math.floor(Math.random() * userShirts.length)];
 
-		const userPants = user.items.filter((item) => item.bodyPart === 'Pants');
 		const randPants = userPants[Math.floor(Math.random() * userPants.length)];
 
 		res.json({ randShirt, randPants });
