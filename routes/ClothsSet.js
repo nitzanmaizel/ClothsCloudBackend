@@ -9,7 +9,7 @@ const getToken = require('../middleware/getToken');
 // @desc     Get logged in user
 // @access   Private
 
-router.get('/randomset', getToken, async (req, res) => {
+router.get('/randomset', async (req, res) => {
 	try {
 		let filter = {};
 		if (req.query.style) filter.style = req.query.style;
