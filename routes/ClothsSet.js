@@ -318,12 +318,32 @@ router.delete('/save/:id', getToken, async (req, res) => {
 // @desc     Get user favorite sets collection
 // @access   Private
 
-router.get('/fav', getToken, async (req, res) => {
+router.get('/favorite', getToken, async (req, res) => {
 	try {
-		// const user = await User.findOne({ _id: req.params.id });
+		const userID = req.user.id;
 
-		// res.json(user);
-		res.json('hello');
+		let user = await User.findOne({ _id: userID }).populate({
+			path: 'favoriteSets',
+			populate: [
+				{
+					path: 'pants',
+					model: 'Item',
+				},
+				{
+					path: 'shirt',
+					model: 'Item',
+				},
+			],
+		});
+		if (!user) {
+			return res.status(400).json({ msg: 'User not exists' });
+		}
+
+		if (user.favoriteSets.length === 0) {
+			return res.status(404).send({ err: 'No Cloths Sets found' });
+		}
+
+		res.json(user.favoriteSets);
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Server Error');
