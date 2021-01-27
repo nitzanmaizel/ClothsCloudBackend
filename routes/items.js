@@ -194,9 +194,9 @@ router.put('/save/:id', getToken, async (req, res) => {
 // @desc     Get logged in user
 // @access   Private
 
-router.get('/myitems/:id', async (req, res) => {
+router.get('/myitems', getToken, async (req, res) => {
 	try {
-		const user = await User.findOne({ _id: req.params.id }).populate('items');
+		const user = await User.findOne({ _id: req.user.id }).populate('items');
 		res.json(user.items);
 	} catch (err) {
 		console.error(err.massage);
