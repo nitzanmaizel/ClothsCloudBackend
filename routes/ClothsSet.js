@@ -157,11 +157,23 @@ router.put(
 // @desc     Get all Cloths Sets from user collection
 // @access   Private
 
-router.get('/userSets', getToken, async (req, res) => {
+router.get('/userSets', async (req, res) => {
 	try {
 		const userID = req.user.id;
 
-		let user = await User.findOne({ _id: userID }).populate('clothsSets');
+		let user = await User.findOne({ _id: userID }).populate({
+			path: 'clothsSets',
+			populate: [
+				{
+					path: 'pants',
+					model: 'Item',
+				},
+				{
+					path: 'shirt',
+					model: 'Item',
+				},
+			],
+		});
 
 		if (!user) {
 			return res.status(400).json({ msg: 'User not exists' });
