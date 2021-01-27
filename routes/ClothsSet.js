@@ -51,9 +51,7 @@ router.post(
 		}
 
 		try {
-			const { name, style, season } = req.body;
-
-			const { shirt, pants } = req.query;
+			const { name, style, season, pants, shirt } = req.body;
 
 			const userID = req.user.id;
 
