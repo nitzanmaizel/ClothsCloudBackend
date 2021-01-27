@@ -314,9 +314,9 @@ router.delete('/save/:id', getToken, async (req, res) => {
 // @desc     Get user favorite sets collection
 // @access   Private
 
-router.get('/favorite/:id', async (req, res) => {
+router.get('/favorite', getToken, async (req, res) => {
 	try {
-		const userID = req.params.id;
+		const userID = req.user.id;
 
 		let user = await User.findOne({ _id: userID }).populate({
 			path: 'favoriteSets',
