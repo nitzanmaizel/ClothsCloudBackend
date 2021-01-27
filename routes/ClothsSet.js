@@ -51,7 +51,7 @@ router.post(
 		}
 
 		try {
-			const { name, style, color, season } = req.body;
+			const { name, style, season } = req.body;
 
 			const { shirt, pants } = req.query;
 
@@ -76,7 +76,6 @@ router.post(
 			clothsSet = new ClothsSet({
 				name,
 				style,
-				color,
 				shirt,
 				pants,
 				season,

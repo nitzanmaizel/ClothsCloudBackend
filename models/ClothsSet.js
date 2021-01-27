@@ -9,9 +9,6 @@ const ClothsSet = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	color: {
-		type: String,
-	},
 	season: {
 		type: String,
 	},
