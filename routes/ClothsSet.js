@@ -14,7 +14,7 @@ router.get('/randomset', getToken, async (req, res) => {
 		let filter = {};
 		if (req.query.style) filter.style = req.query.style;
 		if (req.query.season) filter.season = req.query.season;
-		const user = await User.findOne({ _id: req.params.id }).populate('items');
+		const user = await User.findOne({ _id: req.user.id }).populate('items');
 		const userShirts = user.items.filter((item) => item.bodyPart === 'Shirt');
 		const randShirt = userShirts[Math.floor(Math.random() * userShirts.length)];
 
