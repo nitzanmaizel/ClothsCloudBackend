@@ -188,6 +188,37 @@ router.put('/save/:id', getToken, async (req, res) => {
 	}
 });
 
+// @route    DELETE api/items/save/:id
+// @desc     Delete item from user favorite items collection
+// @access   Private
+
+router.delete('/save/:id', getToken, async (req, res) => {
+	try {
+		const ItemID = req.params.id;
+
+		const userID = req.user.id;
+
+		let user = await User.findOne({ _id: userID });
+
+		const isSaved = user.favoriteItems.some((id) => id == ItemID);
+
+		if (!isSaved) {
+			return res.status(400).json({ err: 'Set not found' });
+		}
+
+		const index = user.favoriteItems.indexOf(ItemID);
+
+		user.favoriteItems.splice(index, 1);
+
+		await user.save();
+
+		res.json({ msg: 'Item deleted successfully' });
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Server Error');
+	}
+});
+
 // @route    GET api/items/myitems
 // @desc     Get user items
 // @access   Private
