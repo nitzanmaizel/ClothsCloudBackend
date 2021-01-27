@@ -191,13 +191,27 @@ router.put('/save/:id', getToken, async (req, res) => {
 });
 
 // @route    GET api/items/myitems
-// @desc     Get logged in user
+// @desc     Get user items
 // @access   Private
 
 router.get('/myitems', getToken, async (req, res) => {
 	try {
 		const user = await User.findOne({ _id: req.user.id }).populate('items');
 		res.json(user.items);
+	} catch (err) {
+		console.error(err.massage);
+		res.status(500).send('Server error');
+	}
+});
+
+// @route    GET api/items/myitems/favorite
+// @desc     Get user favorite items
+// @access   Private
+
+router.get('/myitems/favorite', getToken, async (req, res) => {
+	try {
+		const user = await User.findOne({ _id: req.user.id }).populate('favoriteItems');
+		res.json(user.favoriteItems);
 	} catch (err) {
 		console.error(err.massage);
 		res.status(500).send('Server error');
